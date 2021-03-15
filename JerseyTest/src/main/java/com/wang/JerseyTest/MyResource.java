@@ -22,13 +22,14 @@ public class MyResource {
 	@GET
 	// The Java method will produce content identified by the MIME Media
 	// type "text/plain"
+	@Path("get")
 	@Produces("text/plain")
 	public String getIt() {
 		return "Got it!";
 	}
 
 	@GET
-	@Path("par/{param}")
+	@Path("get/{param}")
 	public Response getMsg(@PathParam("param") String msg) {
 		String output = "Jersy say : " + msg;
 		return Response.status(200).entity(output).build();
