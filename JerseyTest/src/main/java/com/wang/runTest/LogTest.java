@@ -1,4 +1,4 @@
-package com.wang.common;
+package com.wang.runTest;
 
 import org.apache.log4j.*;
 

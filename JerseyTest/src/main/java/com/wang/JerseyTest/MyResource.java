@@ -1,5 +1,10 @@
 package com.wang.JerseyTest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -12,8 +17,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.wang.module.UserBean;
-import com.wang.module.XwwwFormBean;
+import com.wang.model.XwwwFormBean;
+import com.wang.common.StringUtils;
+import com.wang.model.FileInputBean;
+import com.wang.model.UserBean;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -66,7 +73,7 @@ public class MyResource {
 	@Path("post/form")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response testPostForm(@BeanParam UserBean input) {
+	public Response testPostForm(@BeanParam com.wang.model.UserBean input) {
 //		return Response.status(200).entity(input).build();
 //		return input;
 		System.out.println(input);
@@ -80,5 +87,28 @@ public class MyResource {
 	public Response testxPostForm(@BeanParam XwwwFormBean input) {
 		System.out.println(input);
 		return Response.status(200).entity(input).build();
+	}
+
+	@POST
+	@Path("post/form/file")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response testPostFormFile(@BeanParam FileInputBean input) {
+		System.out.println(input);
+		InputStream is = input.getFileBody().getValueAs(InputStream.class);
+		byte[] data = new byte[512];
+		int len;
+		try {
+			FileOutputStream fos = new FileOutputStream("E:/TestFile/0619.txt");
+			while ((len = is.read(data)) != -1) {
+				fos.write(data, 0, len);
+			}
+			fos.flush();
+			fos.close();
+			is.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(StringUtils.beanToJsonString(input)).build();
 	}
 }

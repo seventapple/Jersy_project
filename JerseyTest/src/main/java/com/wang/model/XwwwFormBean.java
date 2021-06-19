@@ -1,16 +1,16 @@
-package com.wang.module;
+package com.wang.model;
 
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
-public class UserBean {
-
-	@FormDataParam("name")
+@XmlRootElement(name = "user")
+public class XwwwFormBean {
+	@FormParam("name")
 	private String name;
 
 	@DefaultValue("7")
-	@FormDataParam("age")
+	@FormParam("age")
 	private int age;
 
 	public String getName() {
@@ -31,7 +31,7 @@ public class UserBean {
 
 	@Override
 	public String toString() {
-		return "UserBean [name=" + name + ", age=" + age + "]";
+		return "XwwwFormBean [name=" + name + ", age=" + age + "]";
 	}
 
 }
