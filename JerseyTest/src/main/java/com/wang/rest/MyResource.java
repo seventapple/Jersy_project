@@ -1,4 +1,4 @@
-package com.wang.JerseyTest;
+package com.wang.rest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
