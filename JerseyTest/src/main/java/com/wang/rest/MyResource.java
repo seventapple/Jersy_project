@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ScheduledFuture;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -18,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.wang.model.XwwwFormBean;
+import com.wang.schdule.ScheduleUtil;
+import com.wang.schdule.ScheduledExecutorServiceManager;
 import com.wang.common.StringUtils;
 import com.wang.model.FileInputBean;
 import com.wang.model.UserBean;
@@ -110,5 +113,20 @@ public class MyResource {
 			e.printStackTrace();
 		}
 		return Response.status(200).entity(StringUtils.beanToJsonString(input)).build();
+	}
+	
+	@GET
+	@Path("schedule/{param}")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getSchedule(@PathParam("param") String time) {
+		ScheduledExecutorServiceManager executor = ScheduledExecutorServiceManager.getExecutorInstance();
+		ScheduledFuture<?> future = executor.getReloadFuture();
+		future = ScheduleUtil.executeScheduleAtTimePerDayBase(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("Running!!!!");
+			}
+		}, time, future);
+		return Response.status(200).entity("set").build();
 	}
 }

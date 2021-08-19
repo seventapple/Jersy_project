@@ -25,7 +25,8 @@ public class Main {
 	public static HttpServer startServer() {
 		// create a resource config that scans for JAX-RS resources and providers
 		// in com.wang.JerseyTest package
-		final ResourceConfig rc = new ResourceConfig().packages("com.wang.rest");
+		String[] packegs = new String[] { "com.wang.rest", "com.wang.loader" };
+		final ResourceConfig rc = new ResourceConfig().packages(packegs);
 		// support for multipart/form-data
 		rc.register(MultiPartFeature.class);
 		// create and start a new instance of grizzly http server
