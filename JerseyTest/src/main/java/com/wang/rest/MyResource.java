@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import com.wang.model.XwwwFormBean;
 import com.wang.schdule.ScheduleUtil;
@@ -46,10 +47,16 @@ public class MyResource {
 
 	@GET
 	@Path("get/{param}")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMsg(@PathParam("param") String msg) {
-		String output = "Jersy say : " + msg;
-		return Response.status(200).entity(output).build();
+		String output = "{\"msg\":\"" + msg + "\"}";
+		ResponseBuilder builder = Response.status(200).entity(output);
+		builder.header("Access-Control-Allow-Origin", "*"); // 允许访问所有域，可以换成具体url，注意仅具体url才能带cookie信息
+		builder.header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token"); // header的类型
+		builder.header("Access-Control-Allow-Credentials", "true"); // 设置为true，允许ajax异步请求带cookie信息
+		builder.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"); // 允许请求方法
+		builder.header("content-type", "application/json;charset=UTF-8");
+		return builder.build();
 	}
 
 	@GET
