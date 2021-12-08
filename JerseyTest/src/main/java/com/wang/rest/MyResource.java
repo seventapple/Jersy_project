@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.concurrent.ScheduledFuture;
 
 import javax.ws.rs.BeanParam;
@@ -42,20 +44,38 @@ public class MyResource {
 	@Path("get")
 	@Produces(MediaType.TEXT_HTML)
 	public String getIt() {
-		return "Got it!";
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return "get it!";
 	}
 
 	@GET
 	@Path("get/{param}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMsg(@PathParam("param") String msg) {
-		String output = "{\"msg\":\"" + msg + "\"}";
-		ResponseBuilder builder = Response.status(200).entity(output);
-		builder.header("Access-Control-Allow-Origin", "*"); // 允许访问所有域，可以换成具体url，注意仅具体url才能带cookie信息
-		builder.header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token"); // header的类型
-		builder.header("Access-Control-Allow-Credentials", "true"); // 设置为true，允许ajax异步请求带cookie信息
-		builder.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"); // 允许请求方法
-		builder.header("content-type", "application/json;charset=UTF-8");
+		String output = "";
+		ResponseBuilder builder;
+		if (msg != null && !msg.equals("error")) {
+			output = "{\"msg\":\"" + msg + "\"}";
+			builder = Response.status(200).entity(output);
+		} else {
+			builder = Response.status(400);
+			builder.header("Error-Code", 51000);
+			try {
+				builder.header("Error-Message", URLEncoder.encode("入力参数不正确.", "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+
+//		builder.header("Access-Control-Allow-Origin", "*"); // 允许访问所有域，可以换成具体url，注意仅具体url才能带cookie信息
+//		builder.header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token"); // header的类型
+//		builder.header("Access-Control-Allow-Credentials", "true"); // 设置为true，允许ajax异步请求带cookie信息
+//		builder.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"); // 允许请求方法
+//		builder.header("content-type", "application/json;charset=UTF-8");
 		return builder.build();
 	}
 
@@ -121,7 +141,7 @@ public class MyResource {
 		}
 		return Response.status(200).entity(StringUtils.beanToJsonString(input)).build();
 	}
-	
+
 	@GET
 	@Path("schedule/{param}")
 	@Produces(MediaType.TEXT_HTML)
